@@ -28,6 +28,7 @@ class AllWars
 
     public function run()
     {
+        pecho('Fetch stated; ALL WARS');
         $start = microtime(true);
 
         $workers = $this->threads;

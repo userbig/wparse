@@ -6,9 +6,10 @@ namespace Main\Threaded\Workers;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Main\Models\War;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
-use PDO;
+
 
 class ActiveWarsWorker extends \Worker
 {
@@ -21,18 +22,8 @@ class ActiveWarsWorker extends \Worker
 
     public function run()
     {
-        $host = getenv('DB_HOST');
-
-        $dbname = getenv('DB_DATABASE');
-
-        $dbuser = getenv('DB_USERNAME');
-
-        $dbpass = getenv('DB_PASSWORD');
-
-        $pdo = new PDO("pgsql:host=$host;dbname=$dbname", $dbuser, $dbpass);
 
         $client = new Client();
-
 
         do {
             $warList = null;
@@ -43,7 +34,7 @@ class ActiveWarsWorker extends \Worker
             $start = microtime(true);
 
             $log = new Logger('AllWars');
-            $log->pushHandler(new StreamHandler('work.log', Logger::DEBUG));
+            $log->pushHandler(new StreamHandler('logs/work.log', Logger::DEBUG));
 
             $provider = $this->worker->getProvider();
 
@@ -57,7 +48,9 @@ class ActiveWarsWorker extends \Worker
                 continue;
             }
 
-            $log->info("work started on thread $this->id ". microtime(true) . "processed pages atm: " . $dataArray['processed'] . ' of ' . $dataArray['totalPages']);
+
+            $log->info("Work started on thread $this->id ". microtime(true) . " processed pages atm: " . $dataArray['processed'] . ' of ' . $dataArray['totalPages']);
+            pecho("Work started on thread $this->id ". microtime(true) . " processed pages atm: " . $dataArray['processed'] . ' of ' . $dataArray['totalPages']);
 
             foreach ($warList as $key => $warId) {
 
@@ -66,15 +59,18 @@ class ActiveWarsWorker extends \Worker
                 $att = 0;
                 do {
                     try {
-
                         $req = $client->request('GET', $url);
                         $war = json_decode($req->getBody());
                     } catch (RequestException $e) {
-                        echo PHP_EOL . 'ERROR repeat in 5sec' . $try . PHP_EOL;
-                        echo PHP_EOL . $e . PHP_EOL;
-                        if ($e->getCode() === 422) {
+                        if ($e->getCode() === 502) {
+                            echo PHP_EOL . "\e[1;37;42m  ERROR repeat in 1 second. Dont worry. ESI some times randomly throws 502 error; Tries: " . $try . "\e[0m\n";
+                            echo PHP_EOL . $e . PHP_EOL;
+                        } elseif ($e->getCode() === 422) {
                             $war = null;
                             break;
+                        } else {
+                            echo PHP_EOL . 'ERROR repeat in 1 second; Tries: ' . $try . PHP_EOL;
+                            echo PHP_EOL . $e . PHP_EOL;
                         }
                         $att++;
                         sleep(1);
@@ -85,7 +81,8 @@ class ActiveWarsWorker extends \Worker
                 } while ($att < $try);
 
                 if ($war === null) {
-                    $log->warning("this was not in list; war_id: $warId ");
+                    $log->warning("This was not in list; war_id: $warId ");
+                    pecho("This was not in list; war_id: $warId ");
                     continue;
                 }
 
@@ -105,48 +102,13 @@ class ActiveWarsWorker extends \Worker
                     'last' => date("Y-m-d H:i:s")
 
                 ];
-
-                $stmt = $pdo->prepare("
-              
-              INSERT INTO wars(aggressor_id, aggressor, allies, declared, defender_id,
-                      defender, finished, war_id, mutual, open_for_allies, started, last_api_update)
-                    VALUES (:aggressor_id, :aggressor, :allies, :declared, :defender_id, :defender, :finished, :war_id, :mutual, :open_for_allies, :started, :last_api_update)
-                    ON CONFLICT (war_id) DO UPDATE 
-                        SET aggressor_id=excluded.aggressor_id, aggressor=excluded.aggressor, allies=excluded.allies, declared=excluded.declared, defender_id=excluded.defender_id,
-                            defender=excluded.defender, finished=excluded.finished, mutual=excluded.mutual, open_for_allies=excluded.open_for_allies, started=excluded.started, 
-                            last_api_update=excluded.last_api_update;
-              
-              ");
-
-
-
-                $stmt->bindValue(':aggressor_id', $values['aggressor_id']);
-                $stmt->bindValue(':aggressor', $values['aggressor']);
-                $stmt->bindValue(':allies', $values['allies']);
-                $stmt->bindValue(':declared', $values['declared']);
-                $stmt->bindValue(':defender_id', $values['defender_id']);
-                $stmt->bindValue(':defender', $values['defender']);
-                $stmt->bindValue(':finished', $values['finished']);
-                $stmt->bindValue(':war_id', $values['war_id']);
-                //        bool
-                $stmt->bindValue(':mutual', $values['mutual']);
-                $stmt->bindValue(':open_for_allies', $values['open']);
-                //        timestamp
-                $stmt->bindValue(':finished', $values['finished']);
-                $stmt->bindValue(':started', $values['started']);
-                $stmt->bindValue(':last_api_update', $values['last']);
-                $r = $stmt->execute();
-//                dd($stmt);
-
-                $stmt->closeCursor();
-
-//                die();
-
+                $model = (new War())->updateOrCreate($values);
 
             }
 
             $end = microtime(true);
             $log->info("Thread $this->id finished work in " . ($end - $start)/60 . ' mins: ' . microtime(true));
+            pecho("Thread $this->id finished work in " . ($end - $start)/60 . ' mins: ' . microtime(true));
             echo PHP_EOL . 'ITERATION COMPLETE' . PHP_EOL;
         }
         while ($warList !== null);

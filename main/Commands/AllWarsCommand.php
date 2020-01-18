@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Main;
+namespace Main\Commands;
 
 
 use Main\Threaded\AllWars;
@@ -21,8 +21,6 @@ class AllWarsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
-
         new AllWars();
         return 0;
 

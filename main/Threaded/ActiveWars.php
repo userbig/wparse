@@ -19,7 +19,6 @@ class ActiveWars
 
     public function __construct()
     {
-
         $this->threads = 5;
         $this->provider = new ActiveWarsBalancer();
         $this->pool = new \Pool($this->threads, BaseWorker::class, [$this->provider, 'init.php']);
@@ -28,6 +27,7 @@ class ActiveWars
 
     public function run()
     {
+        pecho('Fetch stated; ACTIVE WARS');
         $start = microtime(true);
 
         $workers = $this->threads;

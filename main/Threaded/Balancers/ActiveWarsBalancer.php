@@ -25,6 +25,8 @@ class ActiveWarsBalancer extends Worker
     public function __construct()
     {
 
+        pecho('Balancer initialized');
+
         $this->warIds;
 
         $host = getenv('DB_HOST');
@@ -52,6 +54,8 @@ class ActiveWarsBalancer extends Worker
         $this->warIds = (array) array_unique(array_merge($dbArray, range($this->maxWarId, $this->maxWarId - 4000, -1)), SORT_NUMERIC);
 
         $this->totalPages = (int)ceil(count($this->warIds) / $this->chunks);
+
+        pecho("Wars need to be checked: " . count($this->warIds) . "; This is {$this->totalPages} iterations, {$this->chunks} per worker");
 
 
     }

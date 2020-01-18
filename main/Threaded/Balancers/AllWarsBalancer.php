@@ -16,6 +16,8 @@ class AllWarsBalancer extends \Worker
 
     public function __construct($maxWarId = 999999999)
     {
+        pecho('Balancer initialized');
+
         $this->maxWarId = $maxWarId;
 
         $client = new Client();
@@ -27,6 +29,8 @@ class AllWarsBalancer extends \Worker
         $this->totalPages = (int)ceil($this->maxWarId / 2000);
 
         echo PHP_EOL . "MAX WAR ID $this->maxWarId" . PHP_EOL;
+
+        pecho("Max war_id: " . $this->maxWarId . "; This is {$this->totalPages} iterations, 2000 per worker");
     }
 
     public function getNext()
