@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Main\Threaded;
-
 
 use Main\Threaded\Balancers\AllWarsBalancer;
 use Main\Threaded\Workers\AllWarsWorker;
@@ -19,7 +17,6 @@ class AllWars
 
     public function __construct()
     {
-
         $this->threads = 300;
         $this->provider = new AllWarsBalancer();
         $this->pool = new \Pool($this->threads, BaseWorker::class, [$this->provider, 'init.php']);
@@ -33,12 +30,11 @@ class AllWars
 
         $workers = $this->threads;
 
-        for($i = 0; $i < $workers; $i++) {
+        for ($i = 0; $i < $workers; $i++) {
             $this->pool->submit(new AllWarsWorker($i));
         }
 
         $this->pool->shutdown();
-        printf("Done for %.2f seconds" . PHP_EOL, microtime(true) - $start);
-
+        printf('Done for %.2f seconds'.PHP_EOL, microtime(true) - $start);
     }
 }

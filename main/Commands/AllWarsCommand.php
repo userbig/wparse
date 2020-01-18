@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Main\Commands;
-
 
 use Main\Threaded\AllWars;
 use Symfony\Component\Console\Command\Command;
@@ -18,12 +16,10 @@ class AllWarsCommand extends Command
         $this->setDescription('Fetch all wars. Use it only to fill database');
     }
 
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         new AllWars();
+
         return 0;
-
     }
-
 }

@@ -2,8 +2,6 @@
 
 namespace Main\Threaded;
 
-
-
 use Main\Threaded\Balancers\ActiveWarsBalancer;
 use Main\Threaded\Workers\ActiveWarsWorker;
 
@@ -32,13 +30,11 @@ class ActiveWars
 
         $workers = $this->threads;
 
-        for($i = 0; $i < $workers; $i++) {
+        for ($i = 0; $i < $workers; $i++) {
             $this->pool->submit(new ActiveWarsWorker($i));
         }
 
         $this->pool->shutdown();
-        printf("Done for %.2f seconds" . PHP_EOL, microtime(true) - $start);
-
+        printf('Done for %.2f seconds'.PHP_EOL, microtime(true) - $start);
     }
-
 }

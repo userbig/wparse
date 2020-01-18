@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace Main\Commands;
 
 use Main\Threaded\ActiveWars;
@@ -20,8 +18,6 @@ class ActiveWarsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
-
         new ActiveWars();
 
         return 0;
