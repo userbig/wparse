@@ -38,6 +38,28 @@ Copy and rename `.env.example` to `.env` and populate fields with your data.
 
 
 
+## Create table
+
+```
+CREATE TABLE public.wars
+(
+    aggressor_id bigint NOT NULL,
+    aggressor json NOT NULL,
+    allies json,
+    declared timestamp(4) without time zone NOT NULL,
+    defender_id bigint NOT NULL,
+    defender json NOT NULL,
+    finished timestamp(4) without time zone,
+    war_id bigint NOT NULL,
+    mutual boolean NOT NULL,
+    open_for_allies boolean,
+    started timestamp(4) without time zone NOT NULL,
+    last_api_update timestamp(4) without time zone NOT NULL,
+    CONSTRAINT wars_pkey PRIMARY KEY (war_id)
+)
+```
+
+
 ## Typical data
 
 ```
