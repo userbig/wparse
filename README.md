@@ -58,6 +58,7 @@ PostgreSQL can query through json objects with ease without any (noticeable) per
 
 - implement progress bar 
 - autoload for commands
+- dockerize
 
 ## Bug repots
 
