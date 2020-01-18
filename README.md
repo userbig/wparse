@@ -1,6 +1,8 @@
-#WPARSE
+# WPARSE
 
 This is CLI multithreaded wars parser for [EVE Online](https://www.eveonline.com/). Based on [pthreads](https://www.php.net/manual/en/book.pthreads.php) extension for php.
+<br>
+At this moment this is standalone app.
 
 ### Info
 
@@ -10,9 +12,10 @@ This is CLI multithreaded wars parser for [EVE Online](https://www.eveonline.com
 
 ## Special requirements
 
-- PHP-ZTS ^7.3.2
+- PHP-ZTS =>7.3.2
 - PostgreSQL
 - At least 3 cores and 2g RAM (for 300 threads)
+- PDO PHP Extension
 
 
 ## Installation
