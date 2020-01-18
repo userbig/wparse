@@ -57,3 +57,8 @@ PostgreSQL can query through json objects with ease without any (noticeable) per
 ## TODOs
 
 - implement progress bar 
+- autoload for commands
+
+## Bug repots
+
+Please use [Github Issues](https://github.com/userbig/wparse/issues) for bug reports.
