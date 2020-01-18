@@ -52,3 +52,8 @@ Copy and rename `.env.example` to `.env` and populate fields with your data.
 PostgreSQL can query through json objects with ease without any (noticeable) perfomance impact
 
 [About json in PostgreSQL](https://www.postgresql.org/docs/9.3/functions-json.html)
+
+
+## TODOs
+
+- implement progress bar 
