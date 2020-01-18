@@ -26,4 +26,29 @@ TODO
 ## Getting started
 
 
-TODO
+Copy and rename `.env.example` to `.env` and populate fields with your data.
+
+###### To store ALL wars to fresh database run command
+
+`php app wars:all`
+
+###### Check active wars
+
+`php app wars:active`
+
+
+
+## Typical data
+
+```
+ aggressor_id |                           aggressor                            |                           allies                            |      declared       | defender_id |                            defender                            |      finished       | war_id | mutual | open_for_allies |       started       |   last_api_update   
+--------------+----------------------------------------------------------------+-------------------------------------------------------------+---------------------+-------------+----------------------------------------------------------------+---------------------+--------+--------+-----------------+---------------------+---------------------
+     98036605 | {"corporation_id":98036605,"isk_destroyed":0,"ships_killed":0} | [{"corporation_id":98120136},{"corporation_id":1721412068}] | 2012-07-13 13:45:00 |    98079171 | {"corporation_id":98079171,"isk_destroyed":0,"ships_killed":0} | 2012-07-16 14:37:00 | 221829 | f      | f               | 2012-07-14 13:45:00 | 2020-01-17 07:32:41
+
+```
+
+`aggressor` and `defender` typical json. `allies` are json array elements
+
+PostgreSQL can query through json objects with ease without any (noticeable) perfomance impact
+
+[About json in PostgreSQL](https://www.postgresql.org/docs/9.3/functions-json.html)
