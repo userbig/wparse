@@ -1,15 +1,12 @@
 <?php
 
-
 namespace Main\Models;
-
 
 class War extends BaseModel
 {
-
     public function updateOrCreate($values)
     {
-        $stmt = $this->connection->prepare("
+        $stmt = $this->connection->prepare('
               
               INSERT INTO wars(aggressor_id, aggressor, allies, declared, defender_id,
                       defender, finished, war_id, mutual, open_for_allies, started, last_api_update)
@@ -19,7 +16,7 @@ class War extends BaseModel
                             defender=excluded.defender, finished=excluded.finished, mutual=excluded.mutual, open_for_allies=excluded.open_for_allies, started=excluded.started, 
                             last_api_update=excluded.last_api_update;
               
-              ");
+              ');
 
         $stmt->bindValue(':aggressor_id', $values['aggressor_id']);
         $stmt->bindValue(':aggressor', $values['aggressor']);
@@ -38,9 +35,6 @@ class War extends BaseModel
         $stmt->bindValue(':last_api_update', $values['last']);
         $r = $stmt->execute();
 
-
         $stmt->closeCursor();
-
     }
-
 }

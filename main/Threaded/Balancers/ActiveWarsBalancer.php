@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Main\Threaded\Balancers;
-
 
 use GuzzleHttp\Client;
 use PDO;
@@ -10,8 +8,6 @@ use Worker;
 
 class ActiveWarsBalancer extends Worker
 {
-
-
     protected $warIds;
 
     protected $maxWarId;
@@ -24,7 +20,6 @@ class ActiveWarsBalancer extends Worker
 
     public function __construct()
     {
-
         pecho('Balancer initialized');
 
         $this->warIds;
@@ -43,28 +38,22 @@ class ActiveWarsBalancer extends Worker
 
         $this->maxWarId = json_decode($response->getBody())[0];
 
-
-
         $pdo = new PDO("pgsql:host=$host;dbname=$dbname", $dbuser, $dbpass);
-        $stmt = $pdo->prepare("select war_id from wars where (finished is null or finished > NOW()) order by war_id");
+        $stmt = $pdo->prepare('select war_id from wars where (finished is null or finished > NOW()) order by war_id');
         $stmt->execute();
         $dbArray = (array) $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
         $stmt->closeCursor();
 
         $this->warIds = (array) array_unique(array_merge($dbArray, range($this->maxWarId, $this->maxWarId - 4000, -1)), SORT_NUMERIC);
 
-        $this->totalPages = (int)ceil(count($this->warIds) / $this->chunks);
+        $this->totalPages = (int) ceil(count($this->warIds) / $this->chunks);
 
-        pecho("Wars need to be checked: " . count($this->warIds) . "; This is {$this->totalPages} iterations, {$this->chunks} per worker");
-
-
+        pecho('Wars need to be checked: '.count($this->warIds)."; This is {$this->totalPages} iterations, {$this->chunks} per worker");
     }
 
     public function getNext()
     {
-
-        if($this->processed == $this->totalPages)
-        {
+        if ($this->processed == $this->totalPages) {
             return null;
         }
 
@@ -72,14 +61,12 @@ class ActiveWarsBalancer extends Worker
 
         $this->processed++;
 
-        $warList = array_slice($this->warIds,  $p * 200, $this->chunks);
+        $warList = array_slice($this->warIds, $p * 200, $this->chunks);
 
         return [
-            'warList' => $warList,
-            'processed' => $p,
-            'totalPages' => $this->totalPages
+            'warList'    => $warList,
+            'processed'  => $p,
+            'totalPages' => $this->totalPages,
         ];
-
-
     }
 }
